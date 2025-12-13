@@ -12,6 +12,13 @@ Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="PandaTaekwondo", version="1.0")
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000", "https://panda-taekwondo.vercel.app"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.post("/users")
 def create_user(data: UserCreate, db: Session = Depends(get_db)):
@@ -36,14 +43,6 @@ if not os.path.exists("uploads"):
     os.makedirs("uploads")
 
 app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["http://localhost:3000", "https://panda-taekwondo.vercel.app"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
 
 # đăng ký router
 app.include_router(activities_router)
