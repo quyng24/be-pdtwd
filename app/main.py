@@ -1,8 +1,11 @@
 from fastapi import FastAPI, Depends
 from sqlalchemy.orm import Session
 from .database import Base, engine, get_db
-from .model.modeluser import User
-from .schema.schemauser import UserCreate
+from .models.user import User
+from .schema.user import UserCreate
+from .router.activities import router as activities_router
+from fastapi.staticfiles import StaticFiles
+import os
 
 Base.metadata.create_all(bind=engine)
 
@@ -25,3 +28,12 @@ def create_user(data: UserCreate, db: Session = Depends(get_db)):
             "birthday": str(new_user.birthday)
         }
     }
+
+# serve ảnh tĩnh
+if not os.path.exists("uploads"):
+    os.makedirs("uploads")
+
+app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
+
+# đăng ký router
+app.include_router(activities_router)
