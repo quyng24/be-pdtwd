@@ -20,6 +20,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+@app.get("/")
+def home():
+    return {"message": "Hello World! Backend Python của bạn đang chạy!"}
+
 @app.post("/users")
 def create_user(data: UserCreate, db: Session = Depends(get_db)):
     new_user = User(
